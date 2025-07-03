@@ -23,6 +23,10 @@ jobs:
       
       - name: Clone restic
         run: git clone --depth 1 --branch=v${VERSION} $RESTIC_REPO $RESTIC_DIR
+        
+      - name: Copy Dockerfile to restic source
+        run: cp Dockerfile $RESTIC_DIR/
+         
       - name: Normalize image name and tag
         id: prep
         run: |
@@ -39,6 +43,7 @@ jobs:
 
       - name: Build Docker image
         run: |
+          cd $RESTIC_DIR
           docker build \
             --build-arg VERSION=${{ env.VERSION }} \
             -t ${{ steps.prep.outputs.IMAGE }}:${{ steps.prep.outputs.TAG }} .
