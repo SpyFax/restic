@@ -40,32 +40,27 @@ jobs:
           echo "Labels:"
           echo "${{ steps.meta.outputs.labels }}"
 
-      # - name: Clone restic
-      #   run: git clone --depth 1 --branch=v${VERSION} $RESTIC_REPO $RESTIC_DIR
-      #   
-      # - name: Copy Dockerfile to restic source
-      #   run: cp Dockerfile $RESTIC_DIR/
-      #    
-      # - name: Normalize image name and tag
-      #   id: prep
-      #   run: |
-      #     REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-      #     echo "IMAGE=ghcr.io/${REPO_LOWER}" >> "$GITHUB_OUTPUT"
-      #     echo "TAG=v${VERSION}" >> "$GITHUB_OUTPUT"
-      #
-      # - name: Log in to GitHub Container Registry
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-      #
-      # - name: Build Docker image
-      #   run: |
-      #     cd $RESTIC_DIR
-      #     docker build \
-      #       --build-arg VERSION=${{ env.VERSION }} \
-      #       -t ${{ steps.prep.outputs.IMAGE }}:${{ steps.prep.outputs.TAG }} .
-      #
-      # - name: Push Docker image
-      #   run: docker push ${{ steps.prep.outputs.IMAGE }}:${{ steps.prep.outputs.TAG }}
+      - name: Clone restic
+        run: git clone --depth 1 --branch=v${VERSION} $RESTIC_REPO $RESTIC_DIR
+        
+      - name: Copy Dockerfile to restic source
+        run: cp Dockerfile $RESTIC_DIR/
+         
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v6.18.0
+        with:
+          push: true
+          context: $RESTIC_DIR
+          file: Dockerfile
+          platforms: linux/386,linux/amd64,linux/arm,linux/arm64
+          pull: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
