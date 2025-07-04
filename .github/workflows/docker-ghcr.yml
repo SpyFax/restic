@@ -58,7 +58,7 @@ jobs:
         uses: docker/build-push-action@v6.18.0
         with:
           push: true
-          context: $RESTIC_DIR
+          context: ${{ env.RESTIC_DIR }}
           file: Dockerfile
           platforms: linux/386,linux/amd64,linux/arm,linux/arm64
           pull: true
