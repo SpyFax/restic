@@ -60,7 +60,7 @@ jobs:
           push: true
           context: ${{ env.RESTIC_DIR }}
           file: Dockerfile
-          platforms: linux/386,linux/amd64,linux/arm,linux/arm64
+          # platforms: linux/386,linux/amd64,linux/arm,linux/arm64
           pull: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
