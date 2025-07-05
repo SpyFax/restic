@@ -23,5 +23,7 @@ COPY --from=builder /go/src/github.com/restic/restic/restic /usr/bin
 RUN mkdir -p /etc/bash_completion.d && \
     restic generate --bash-completion /etc/bash_completion.d/restic
 
+RUN echo '. /usr/share/bash-completion/bash_completion' >> /etc/bash.bashrc
+
 # Set restic as the container entrypoint
 ENTRYPOINT ["/usr/bin/restic"]
