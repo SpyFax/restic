@@ -20,7 +20,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy the built binary from the builder stage
 COPY --from=builder /go/src/github.com/restic/restic/restic /usr/bin
 
-RUN /bin/sh restic generate --bash-completion > /etc/bash_completion.d/restic
+RUN mkdir -p /etc/bash_completion.d && \
+    restic generate --bash-completion > /etc/bash_completion.d/restic
 
 # Set restic as the container entrypoint
 ENTRYPOINT ["/usr/bin/restic"]
